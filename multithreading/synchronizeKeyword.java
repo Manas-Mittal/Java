@@ -48,7 +48,7 @@ public class synchronizeKeyword {
  * 
  * volatile keyword is only used for variables and it only ensures consistency and not atomicity which is what we get from synchronized block.
  * 
- * 
+ * Intrinsic locks are synchronized as well.
  * 
  * 
  * 
