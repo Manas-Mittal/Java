@@ -19,6 +19,8 @@ public class CountDownLatchExample {
 
         await(long timeout, TimeUnit.unit) -> waits upto the given time
         */
+        //Cant resuse the same latch object once the count down gets 0.
+        
         int numberOfTask = 4;
         ExecutorService executor = Executors.newFixedThreadPool(2);
         CountDownLatch latch = new CountDownLatch(numberOfTask);
