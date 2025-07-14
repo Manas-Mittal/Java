@@ -83,7 +83,7 @@ public class ReadWriteLockExample {
 
 /*
 
-Lock and ReadWriteLock are two interfaces -> ReentrantLock is a class that implements Lock interface methods according to it and ReentrantreadWriteLock is a class that implements ReadWrite interface according to it.
+Lock and ReadWriteLock are two interfaces -> ReentrantLock is a class that implements Lock interface methods according to it and ReentrantreadWriteLock is a class that implements ReadWriteLock interface according to it. ReadWriteLock interaface contains methods readLock(), writeLock() that are used to return the instances of ReadLock class and WriteLock class.
 
 ReentrantReadWriteLock contains two inner classes name ReadLock and WriteLock that implements Lock interface.
 
