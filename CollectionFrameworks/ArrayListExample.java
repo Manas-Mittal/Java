@@ -45,6 +45,9 @@ public class ArrayListExample {
 
         // we have seen that when the elements surpasses the internal capacity then the resizing of the internal array happens and the elements from old internal array are copied into new one but we can definitely see it as a overhead as copying elements will also take O(n) time hence if we are sure that upto these numbers of elements we dont need resizing then we can do:
         ArrayList<Integer> list = new ArrayList<>(1000); here 1000 specifies the initial capacity that is the size of the internal array of this ArrayList.
+
+        There is no method in ArrayList for checking capacity.
+
          */
         // Arrays.asList() method explanation:
 
@@ -149,7 +152,6 @@ This class is completely different from the dynamic, resizable java.util.ArrayLi
 
         "If we are sure that the objects in the list will always be sorted in the same way, and we don’t need to change the sorting technique frequently, then it's better to use Comparable."
         */
-
     }
 
 
