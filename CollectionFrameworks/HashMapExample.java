@@ -11,6 +11,11 @@ public class HashMapExample {
         map.put(2, "abc");
         map.put(3, "xyz");
         map.get(3); //getting value using key
+
+        String red = map.getOrDefault(3, "DefaultVal"); // this method says that if key is present then return the original value and if not then give the defualt value.
+
+        map.putIfAbsent(1, "FGH"); //if i mistakenly put a key that is already in the map then it will get replaced by the new one but using this method will it, now the key-value pair will only be inserted if key is not present.
+        
         map.containsKey(45); //is this key present in the map or not
 
         map.containsValue("Manas"); //to find out specified value is present in the map as value or not
