@@ -1,0 +1,74 @@
+HashMap:
+
+-> unsynchronized and non-ordered
+-> underlying data structure is a bucket array where each bucket[i] holdes head of a linked list or root of a red-black tree
+-> incase of collision of keys the pair gets appended at the last of the linked list of that bucket.
+-> after java8 storage optimisation happend and a threashold value is decided that when the linked list becomes of 8 nodes then the list will get converted into red-black tree
+-> O(1) time complexity in operations like get, put, remove due to hashcode calculation but in worst case it can go to O(n) without treefication and O(logn) with treefication due to multiple collisions.
+->Allows only one null key and multiple null values.
+
+TreeMap:
+
+-> Stores pairs in sorted form based on comparator or comparable using red-black tree.
+-> underlying data structure is a red-Black tree which is indeed self balancing also ensuring O(logn) time complexity in all operations like get, put, remove or contains.
+-> does not allows null keys as they cant be compared.
+-> not at all thread safe
+
+LinkedHashMap:
+
+-> preserves the insertion order or access order if accessOrder = true.
+-> Primary data structures are Hashmaps bucket array and a separate doubly linked list to ensure the insertion order.
+-> Only allows one null key.
+-> its not thread safe
+-> similar time complexities as of hashmap but with the overhead of maintaining a separate linked list.
+
+
+HashTable:
+
+-> Legacy class and not used now.
+-> synchronized and non ordered.
+-> underlying data structure is the same bucket array.
+-> Synchronized but on the cost of performance as complete table is synchronized.
+-> does not allow null keys.
+-> Time complexities are same as of HashMap but can be slow due to locking of complete table in multithreaded environment.
+
+
+concurrentHashMap:
+
+-> thread safe and non ordered.
+-> underlying data structure is a array of nodes of linked list and can be roots of red-black tree after treefication.
+-> does not lock the complete table:
+during java 7: map was divided into segments by default 16 segments and segment based locking happens.
+during java 8: even segment based locking was removed and now the locking happens at the bucket level that is locking the head node of the linked list in which writer has to perform something.
+ -> does not allow null keys.
+ -> Time complexities are same as of HashMap and also works fine incase of concurrent environments.
+
+ ConcurrentSkipListMap:
+
+ -> thread safe and sorted data
+ -> underlying data structure is a concurrent skip list. Its a probablistic data structure that allows efficient O(logn) time complexity for basic operationslike get, put or remove.
+ -> does not allows null keys due to comparison as null cant be comapared.
+
+
+weakHashMap:
+
+-> stores the keys with weak reference, it is used to check that the key is still there or have become anonymous.
+-> allows one null key and multiple null values.
+-> not thread safe.
+-> non ordered.
+
+
+IdentityHashMap:
+
+-> used when you want that hashmap uses default implementation of hashcode method that is of object class and also uses == for checking equality rather then .equals
+
+-> one null key and multiple null values are allowed.
+-> non ordered.
+-> non thread safe.
+
+ImmutableMap:
+-> Used to create an unmodifiable map.
+-> it doesnt allows null key and also not allows null values.
+-> multiple reader threads can read from it at the same time.
+
+"Excluding ConcurrentHashMap, TreeMap, ConcurrentSkipListMap, and Hashtable, all other major map implementations like HashMap, LinkedHashMap, WeakHashMap, and IdentityHashMap allow one null key and multiple null values."
