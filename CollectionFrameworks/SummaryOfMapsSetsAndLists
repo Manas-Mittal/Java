@@ -1,0 +1,336 @@
+1. HashMap
+Thread-safe: No, it's unsynchronized.
+
+Null Keys/Values: Allows one null key and multiple null values.
+
+Underlying Data Structure: A bucket array where each bucket holds the head of a linked list or the root of a Red-Black Tree.
+
+Collision Handling: In case of key collision, the new entry gets appended to the linked list of that bucket.
+
+Java 8+ Optimization (Treefication): If a linked list in a bucket becomes of 8 nodes (threshold), it gets converted into a Red-Black Tree for better performance. It converts back to a linked list if the size drops to 6.
+
+Time Complexity:
+
+Average: O(1) for get, put, remove (due to efficient hash code calculation).
+
+Worst-case (without treefication): O(n) due to all elements hashing to the same bucket (linked list traversal).
+
+Worst-case (with treefication): O(log n) due to traversing the Red-Black Tree.
+
+Locking Mechanism: None inherent; it's non-blocking (in a single-threaded sense).
+
+Concurrent Read/Write: Not allowed safely without external synchronization.
+
+Order Guarantee: Non-ordered (no guaranteed iteration order).
+
+-----------------------------------------------------------------------------------
+
+2. TreeMap
+Thread-safe: No, it's not thread-safe.
+
+Null Keys/Values: Does not allow null keys (as null cannot be compared). Allows multiple null values.
+
+Underlying Data Structure: A Red-Black Tree, which is a self-balancing binary search tree.
+
+Time Complexity: O(log n) for all major operations (get, put, remove, contains) due to the self-balancing nature of the Red-Black Tree.
+
+Locking Mechanism: None inherent.
+
+Concurrent Read/Write: Not allowed safely without external synchronization.
+
+Order Guarantee: Stores pairs in sorted form based on the natural ordering of keys or a custom Comparator provided at construction.
+
+-----------------------------------------------------------------------------------
+
+3. LinkedHashMap
+Thread-safe: No, it's not thread-safe.
+
+Null Keys/Values: Allows one null key and multiple null values.
+
+Underlying Data Structure: Uses HashMap's bucket array and a separate doubly linked list to ensure insertion order (or access order).
+
+Time Complexity: Similar to HashMap: Average O(1), Worst O(n) (or O(log n) with treefication). There's a slight overhead for maintaining the separate linked list, but it generally doesn't change the asymptotic complexity.
+
+Locking Mechanism: None inherent.
+
+Concurrent Read/Write: Not allowed safely without external synchronization.
+
+Order Guarantee: Preserves insertion order by default, or access order if accessOrder = true is set in the constructor.
+
+-----------------------------------------------------------------------------------
+
+4. Hashtable
+Thread-safe: Yes, it is synchronized.
+
+Null Keys/Values: Does not allow null keys or null values.
+
+Underlying Data Structure: A bucket array (similar to HashMap's pre-Java 8 design).
+
+Time Complexity: Average O(1), Worst O(n). However, it can be significantly slower than HashMap or ConcurrentHashMap in multi-threaded environments due to its coarse-grained locking.
+
+Locking Mechanism: Uses synchronized methods, meaning the entire table is locked for virtually every operation (reads and writes), leading to high contention.
+
+Concurrent Read/Write: No, all operations are serialized; concurrent reads/writes are blocked.
+
+Order Guarantee: Non-ordered.
+
+Usage Note: Considered a legacy class and generally not used in new code. ConcurrentHashMap is the modern, more performant alternative.
+
+-----------------------------------------------------------------------------------
+
+5. ConcurrentHashMap
+Thread-safe: Yes, it is thread-safe.
+
+Null Keys/Values: Does not allow null keys or null values.
+
+Underlying Data Structure: An array of Nodes, which can be linked lists or Red-Black Trees (after treefication at threshold 8, similar to HashMap).
+
+Locking Mechanism:
+
+Java 7: Map was divided into Segments (by default 16), and segment-based locking occurred (fine-grained).
+
+Java 8+: Segment-based locking was removed. Now, locking occurs at the bucket level (locking the head node of a linked list/tree within a bucket) combined with CAS (Compare-And-Swap) operations for many operations to achieve very high concurrency.
+
+Time Complexity: Average O(1) for get, put, remove (highly performant in concurrent environments). Worst O(log n) after treefication due to collisions.
+
+Concurrent Read/Write: Yes, designed for high concurrency. Multiple readers and multiple writers can operate simultaneously on different parts of the map.
+
+Order Guarantee: Non-ordered.
+
+---------------------------------------------------------------------------------
+
+6. ConcurrentSkipListMap
+Thread-safe: Yes, it is thread-safe.
+
+Null Keys/Values: Does not allow null keys (as they require comparison). Allows multiple null values.
+
+Underlying Data Structure: A Concurrent Skip List. This is a probabilistic data structure that allows efficient O(log n) average time complexity.
+
+Time Complexity: Average O(log n) for all operations (get, put, remove).
+
+Locking Mechanism: Primarily uses lock-free (non-blocking) algorithms based on extensive CAS (Compare-And-Swap) operations. It does not rely on traditional coarse-grained or fine-grained locks for most operations in the same way Hashtable or even ConcurrentHashMap does; instead, it uses atomic operations and retries.
+
+Concurrent Read/Write: Yes, it is designed for high concurrency, allowing multiple readers and writers to operate simultaneously.
+
+Order Guarantee: Stores pairs in sorted form based on natural ordering of keys or a custom Comparator.
+
+-----------------------------------------------------------------------------------
+
+7. WeakHashMap
+Thread-safe: No, it's not thread-safe.
+
+Null Keys/Values: Allows one null key and multiple null values.
+
+Underlying Data Structure: A hash table. Its entries are held by WeakReference objects, specifically for the keys.
+
+Time Complexity: Average O(1), Worst O(n).
+
+Locking Mechanism: None inherent.
+
+Concurrent Read/Write: Not allowed safely without external synchronization.
+
+Order Guarantee: Non-ordered.
+
+Key Feature: Keys are stored with WeakReference. This means if a key object is no longer strongly referenced elsewhere, it can be garbage collected, and its entry will be automatically removed from the WeakHashMap. Used for caching where keys are temporary.
+
+-----------------------------------------------------------------------------------
+
+8. IdentityHashMap
+Thread-safe: No, it's not thread-safe.
+
+Null Keys/Values: Allows one null key and multiple null values.
+
+Underlying Data Structure: A hash table.
+
+Time Complexity: Average O(1), Worst O(n).
+
+Locking Mechanism: None inherent.
+
+Concurrent Read/Write: Not allowed safely without external synchronization.
+
+Order Guarantee: Non-ordered.
+
+Key Feature: Uses reference equality (==) for comparing keys (instead of .equals()) and System.identityHashCode() for hashing. Useful when object identity is paramount (e.g., implementing object graphs).
+
+-----------------------------------------------------------------------------------
+
+9. ImmutableMap (from Guava, not standard Java API)
+Thread-safe: Yes, inherently thread-safe due to immutability.
+
+Null Keys/Values: Does not allow null keys or null values during construction.
+
+Underlying Data Structure: Varies internally (often an array or compact hash table depending on size) but conceptually a fixed, unchangeable collection of key-value pairs.
+
+Time Complexity: Typically O(1) for get and very efficient for iteration, as there are no mutation overheads or concurrency concerns.
+
+Locking Mechanism: None needed for reads, as it's immutable. Any attempt to modify will throw an UnsupportedOperationException.
+
+Concurrent Read/Write: Multiple reader threads can read from it concurrently without any issues. No writes are allowed at all.
+
+Order Guarantee: Often maintains insertion order, but specific guarantees depend on the factory method used (e.g., ImmutableMap.of() preserves order, ImmutableMap.builder().build() preserves insertion order).
+
+Key Feature: Guarantees that its contents will never change after creation, making it safe to share across threads without synchronization.
+
+-----------------------------------------------------------------------------------
+
+10. HashSet
+Thread-safe: No, it's unsynchronized.
+
+Null Elements: Allows one null element.
+
+Underlying Data Structure: Backed internally by a HashMap (where set elements are stored as keys, and a dummy Object is stored as values).
+
+Time Complexity:
+
+Average: O(1) for add, contains, remove.
+
+Worst-case: O(n) (or O(log n) with HashMap's treefication) in case of hash collisions.
+
+Locking Mechanism: None inherent.
+
+Concurrent Read/Write: Not allowed safely without external synchronization.
+
+Order Guarantee: Non-ordered (no guaranteed iteration order).
+
+-----------------------------------------------------------------------------------
+
+11. LinkedHashSet
+Thread-safe: No, it's not thread-safe.
+
+Null Elements: Allows one null element.
+
+Underlying Data Structure: Backed internally by a LinkedHashMap (elements are keys).
+
+Time Complexity: Similar to HashSet: Average O(1), Worst O(n) (or O(log n) with LinkedHashMap's treefication).
+
+Locking Mechanism: None inherent.
+
+Concurrent Read/Write: Not allowed safely without external synchronization.
+
+Order Guarantee: Preserves insertion order (by relying on LinkedHashMap's linked list).
+
+-----------------------------------------------------------------------------------
+
+12. TreeSet
+Thread-safe: No, it's not thread-safe.
+
+Null Elements: Does not allow null elements (as they cannot be compared).
+
+Underlying Data Structure: Backed internally by a TreeMap (elements are keys).
+
+Time Complexity: O(log n) for add, contains, remove.
+
+Locking Mechanism: None inherent.
+
+Concurrent Read/Write: Not allowed safely without external synchronization.
+
+Order Guarantee: Stores elements in sorted form based on natural ordering or a custom Comparator.
+
+-----------------------------------------------------------------------------------
+
+13. ArrayList
+Thread-safe: No, it's unsynchronized.
+
+Null Elements: Allows multiple null elements.
+
+Underlying Data Structure: A dynamic array.
+
+Time Complexity:
+
+O(1) for get and set by index.
+
+O(n) for add or remove (due to potential element shifting or internal array resizing).
+
+Locking Mechanism: None inherent.
+
+Concurrent Read/Write: Not allowed safely without external synchronization (prone to ConcurrentModificationException).
+
+Order Guarantee: Insertion order (elements are stored and retrieved by index).
+
+-----------------------------------------------------------------------------------
+
+14. Vector
+Thread-safe: Yes, it is synchronized.
+
+Null Elements: Allows multiple null elements.
+
+Underlying Data Structure: A dynamic array (similar to ArrayList).
+
+Time Complexity:
+
+O(1) for get and set by index.
+
+O(n) for add or remove (plus synchronization overhead).
+
+Locking Mechanism: Uses synchronized methods, meaning the entire Vector object is locked for virtually every operation (reads and writes).
+
+Concurrent Read/Write: No, all operations are serialized; concurrent reads/writes are blocked.
+
+Order Guarantee: Insertion order (elements are stored and retrieved by index).
+
+Usage Note: Considered a legacy class and generally not used in new code. CopyOnWriteArrayList or Collections.synchronizedList(new ArrayList<>()) are modern alternatives depending on the use case.
+
+-----------------------------------------------------------------------------------
+
+15. CopyOnWriteArrayList
+Thread-safe: Yes, it is thread-safe.
+
+Null Elements: Allows multiple null elements.
+
+Underlying Data Structure: A dynamic array.
+
+Time Complexity:
+
+Reads (get, iterator, contains): O(n) due to iteration, but effectively very fast as they are lock-free.
+
+Writes (add, remove, set): O(n) because a new copy of the entire underlying array is created on every modification.
+
+Locking Mechanism: For writes, it uses a single internal ReentrantLock to serialize modifications. For reads, there is no explicit locking; they operate on an immutable snapshot.
+
+Concurrent Read/Write: Yes, but asymmetrically. Multiple readers can concurrently access the list without blocking. Writes are serialized (one at a time) but do not block concurrent reads.
+
+Order Guarantee: Insertion order (elements are stored and retrieved by index).
+
+Key Feature: Iterators are "fail-safe" (guaranteed not to throw ConcurrentModificationException) as they operate on an immutable snapshot of the list at the time of their creation. Ideal for scenarios with significantly more reads than writes.
+
+-----------------------------------------------------------------------------------
+
+16. ConcurrentSkipListSet
+Thread-safe: Yes, it is thread-safe.
+
+Null Elements: Does not allow null elements (as they require comparison).
+
+Underlying Data Structure: Backed internally by a ConcurrentSkipListMap (elements are keys).
+
+Time Complexity: O(log n) for add, contains, remove (highly concurrent).
+
+Locking Mechanism: Primarily uses lock-free (non-blocking) algorithms based on CAS (Compare-And-Swap) operations.
+
+Concurrent Read/Write: Yes, designed for high concurrency. Multiple readers and multiple writers can access different parts of the set concurrently.
+
+Order Guarantee: Stores elements in sorted form based on natural ordering or a custom Comparator.
+
+-----------------------------------------------------------------------------------
+
+17. CopyOnWriteArraySet
+Thread-safe: Yes, it is thread-safe.
+
+Null Elements: Allows one null element.
+
+Underlying Data Structure: Backed internally by a CopyOnWriteArrayList (elements are stored within its array).
+
+Time Complexity:
+
+Reads (contains): O(n) due to iteration over the underlying array.
+
+Writes (add, remove): O(n) because a new copy of the entire underlying array is created on every modification, plus an initial scan for uniqueness on add.
+
+Locking Mechanism: For writes, it uses a single internal ReentrantLock to serialize modifications. For reads, there is no explicit locking.
+
+Concurrent Read/Write: Yes, but asymmetrically. Multiple readers can concurrently access the set without blocking. Writes are serialized (one at a time) but do not block concurrent reads.
+
+Order Guarantee: Insertion order.
+
+Key Feature: Provides the uniqueness of a Set combined with the "Copy-On-Write" properties, making it ideal for high-read, low-write scenarios where unique elements are needed.
+
+-----------------------------------------------------------------------------------
