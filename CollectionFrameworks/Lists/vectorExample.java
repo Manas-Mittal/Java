@@ -1,4 +1,4 @@
-package CollectionFrameworks;
+package CollectionFrameworks.Lists;
 
 public class vectorExample {
     public static void main(String args[]){

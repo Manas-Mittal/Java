@@ -1,4 +1,4 @@
-package CollectionFrameworks;
+package CollectionFrameworks.Lists;
 
 import java.util.concurrent.CopyOnWriteArrayList; // Don't forget the import!
 
