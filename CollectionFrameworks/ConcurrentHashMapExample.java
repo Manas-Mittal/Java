@@ -1,62 +1,63 @@
 package CollectionFrameworks;
 
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class CocurrentHashMapExample {
-    public static void main(String args[]){
+public class ConcurrentHashMapExample extends Thread{
+    static Map<Integer, String> l = new ConcurrentHashMap<>();
+    ConcurrentHashMapExample(String name){
+        super(name);
+    }
+    public void run(){
+        System.out.println(Thread.currentThread().getName()+" is trying to concurrent modification!!");
+        try{
+            Thread.sleep(2000);
+        } catch (Exception e) {
 
-        //ConcurrentMap doesnt support sorted data;
+        }
+        l.put(100, "Modified"); //modification
+    }
+    public static void main(String args[]){
+        //ConcurrentHashMap uses segment level or bucket level locking for all write operations and read operations do not need any locking hence it means multiple readers can read at the same time also if a writer is writing on a bucket and reader wants to read then it can do if writer is not doing any structural changes because readers use CAS(compare and swap algo for reading data).
+
+        //There is concurreny level which means the number of concurrency levels will be the segments in which this map will be divided for locking.
+
+        //Default buckets in a map are 16 and if we set concurrency level to 16 then it will become bucket level locking.
+
+        //Not allowed null key as well as null value
+
+        //if there is a reader reading some data from a concurrentHashMap and a writer writes something simultaneously then previously we have seen concurrentModificationException comes in normal HashMaps but here in this case no exception will come.
 
         /*
-        Heirarchy:
-        Map(interface) -> ConcurrentMap(interface) -> ConcurrentHashMap(Class)
 
-        ConcurrentMap has all the methods that are in Map interface but addition to them it has 3 new methods also that are:
+        Constructors:
 
-        Object putIfAbsent(Object key, Object value)
+        Map<Integer, String> mp = new ConcurrentHashMap<>(); default initial capacity(16), default load factor(0.75), default concurrencyLevel(16)
 
-        boolean remove(Object key, Object value)
+        Map<Integer, String> mp = new ConcurrentHashMap<>(20); custom initial capacity(20), default load factor(0.75), default concurrencyLevel(16)
 
-        boolean replace(Object key, Object oldValue, Object newValue)
+        Map<Integer, String> mp = new ConcurrentHashMap<>(20, 0.50); custom initial capacity(20), custom load factor(0.5), default concurrencyLevel(16)
+
+        Map<Integer, String> mp = new ConcurrentHashMap<>(20, 0.50, 8); custom initial capacity(20), custom load factor(0.5), custom concurrencyLevel(8)
          */
 
+        //Demonstration for above point:
 
-
-// ✅ ConcurrentHashMap Summary for Interviews:
-
-// 🔹 Java 7:
-// - Map is divided into 16 segments by default.
-// - Each segment has its own lock (Segment-level locking).
-// - Writers acquire a lock on the segment they modify.
-// - Readers do not need a lock.
-// - But if a writer is writing in a segment and a reader accesses the same segment, the reader has to wait (blocked).
-// - Locking is also needed during:
-//     • Resizing a segment
-//     • Handling collisions (modifying the internal linked list)
-
-
-
-// 🔹 Java 8:
-// - Segments are removed — now it's a flat array of buckets (Node[] table).
-// - Locking happens at the bucket level using synchronized blocks and CAS (Compare-And-Swap).
-// - Writers acquire a lock only on the specific bucket they modify.
-// - Readers do not acquire any lock — they use optimistic reading with CAS.
-// - If a reader reads while a writer is writing on the same bucket:
-//     • If no structural changes (e.g., simple value update), reader proceeds safely.
-//     • If structural change (e.g., node insert/delete), the reader detects inconsistency and retries (not blocked).
-// - Locking is still required during:
-//     • Resizing the whole table (rehashing to a bigger array)
-//     • Collision resolution (e.g., inserting into a linked list or treeifying)
-
-
-// ⚙️ Summary:
-// - Java 8 improves concurrency by using fine-grained locking and CAS.
-// - Readers are never blocked; they retry instead of waiting.
-// - Writers lock only what they need — either a bucket or during resizing.
-
-        //Syntax:
-
-        ConcurrentHashMap<Integer, String> map = new ConcurrentHashMap<>();
-        //methods are moxstly same in Map and ConcurrentHashMap
+        l.put(1, "Manas");
+        l.put(2, "ABC");
+        l.put(3, "XYZ");
+        ConcurrentHashMapExample t1 = new ConcurrentHashMapExample("Modifier");
+        t1.start();
+        Iterator<Map.Entry<Integer, String>> it = l.entrySet().iterator();
+        while(it.hasNext()){
+            Map.Entry<Integer, String> obj= it.next();
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+            System.out.println(Thread.currentThread().getName()+" has readed the value: "+obj.getKey());
+        }
+        //In ConcurrentHashMap, concurrent modifications are allowed without exception. However, an iterator is weakly consistent, so if a writer thread adds an entry after the iterator has moved past that bin, the iterator won’t see it; if the bin is yet to be visited, it may see the new entry.
     }
 }
