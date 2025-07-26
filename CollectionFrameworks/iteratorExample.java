@@ -1,7 +1,5 @@
 package CollectionFrameworks;
 
-Frameworks;
-
 import java.util.*;
 
 public class iteratorExample {
@@ -59,7 +57,7 @@ public class iteratorExample {
 
     - If we remove elements using `it.remove()` (after calling `next()`), then the iterator updates its `expectedModCount` to match the list’s `modCount`, so no exception is thrown.
 
-    Note: The basic `Iterator` interface does not support `it.add()` — only `remove()`. For adding elements during iteration, we use `ListIterator`.
+    Note: The basic `Iterator` interface does not support `it.add()` — only `remove()`. For adding elements during iteration, we use `ListIterator`, ListIterator contains it.add method but normal iterator doesnt.
             */
                 //Special case regarding iterators:
                 /*
@@ -96,7 +94,8 @@ public class iteratorExample {
 
         and we combine both steps and write:
         Iterator<Map.Entry<String, Integer>> it = map.entrySet().iterator();
-
+        and,
+        it.next() method always takes out current Entry object from entrySet and returns that to you.
                  */
     }
 }
