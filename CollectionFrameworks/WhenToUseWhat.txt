@@ -1,7 +1,0 @@
-ConcurrentHashMap: Use when you want highly thread safe map it doesnt guarantee order.
-
-ConcurrentSkipListMap: use when you want concurrency as well as sorting
-
-ConcurrentSkipListSet: when you dont want pair just a single value with thread safe methods and sorted in order.
-
-CopyOnWriteArrayList: Normal ArrayList doesnt allow to write or modify while reading it gives exception but CopyOnWriteArrayList allows it however read will still be performed on old data so use when readers are more and writers are less because it creates a copy for every write hence its costing memory.
