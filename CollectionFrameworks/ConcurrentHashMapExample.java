@@ -11,7 +11,16 @@ public class CocurrentHashMapExample {
         Heirarchy:
         Map(interface) -> ConcurrentMap(interface) -> ConcurrentHashMap(Class)
 
+        ConcurrentMap has all the methods that are in Map interface but addition to them it has 3 new methods also that are:
+
+        Object putIfAbsent(Object key, Object value)
+
+        boolean remove(Object key, Object value)
+
+        boolean replace(Object key, Object oldValue, Object newValue)
          */
+
+
 
 // ✅ ConcurrentHashMap Summary for Interviews:
 
